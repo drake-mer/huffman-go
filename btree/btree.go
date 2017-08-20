@@ -1,18 +1,16 @@
-// btree.go
 package btree
 
 import (
-	"fmt"
-
-	"github.com/elijahbal/huffman/counter"
+    "fmt"
+    "github.com/elijahbal/huffman/counter"
 )
 
 type nodeContent byte
 
 type bNode struct {
-	left    *bNode
-	right   *bNode
-	content nodeContent
+    left    *bNode
+    right   *bNode
+    content nodeContent
 }
 
 func mapTreeToFrequencyMap(input counter.PairList) bNode {
