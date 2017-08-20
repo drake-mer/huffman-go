@@ -22,17 +22,39 @@ type BinaryTree struct {
     content byte  // content of the node
 }
 
-func addRightNode(btree BinaryTree, nodeContent byte){
-    rightNode := btree.right
+func addNode(btree BinaryTree, nodeContent byte, left bool){
+    var rightNode * BinaryTree
+    if left {
+        rightNode = btree.right
+    } else {
+        rightNode = btree.left
+    }
     for rightNode!=nil {
         btree = *rightNode
-        rightNode = btree.right
+        if left {
+            rightNode = btree.right
+        } else {
+            rightNode = btree.left
+        }
     }
-    btree.right = &BinaryTree{
+    newNodePointer := &BinaryTree{
         left: nil,
         right: nil,
         content: nodeContent,
     }
+    if left {
+        btree.left = newNodePointer
+    } else {
+        btree.right = newNodePointer
+    }
+}
+
+func addLeftNode(btree BinaryTree, nodeContent byte){
+    addNode(btree, nodeContent, true)
+}
+
+func addRightNode(btree BinaryTree, nodeContent byte){
+    addNode(btree, nodeContent, false)
 }
 
 func TreeToMap(btree BinaryTree) map[byte]int {
