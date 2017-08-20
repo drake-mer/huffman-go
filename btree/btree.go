@@ -1,18 +1,74 @@
 package btree
 
-import (
-    "fmt"
-    "github.com/elijahbal/huffman/counter"
-)
+// simply define the types used to build the
+// corresponding binary tree
+// 
+// this type definition is not very interesting
+// because it works only on byte, and not on 
+// words of varying length.
+//
+// It is nevertheless 
 
-type nodeContent byte
-
-type bNode struct {
-    left    *bNode
-    right   *bNode
-    content nodeContent
+func max(a, b int) int {
+    if a>b {
+        return a
+    }
+    return b
 }
 
-func mapTreeToFrequencyMap(input counter.PairList) bNode {
-	var initTree bNode
+type BinaryTree struct {
+    left * BinaryTree  // pointer to a binary tree
+    right * BinaryTree // pointer to a binary tree
+    content byte  // content of the node
+}
+
+func addRightNode(btree BinaryTree, nodeContent byte){
+    rightNode := btree.right
+    for rightNode!=nil {
+        btree = *rightNode
+        rightNode = btree.right
+    }
+    btree.right = &BinaryTree{
+        left: nil,
+        right: nil,
+        content: nodeContent,
+    }
+}
+
+func TreeToMap(btree BinaryTree) map[byte]int {
+    counter := make(map[byte]int)
+    var f func(x BinaryTree) 
+    f = func (btree BinaryTree) {
+        counter[btree.content] = counter[btree.content] + 1
+        if btree.left != nil {
+            f(*btree.left)
+        }
+        if btree.right != nil {
+            f(*btree.right)
+        }
+    }
+    defer f(btree)
+    return counter
+}
+
+func TreeSize(btree BinaryTree) int {
+    var f func(_ BinaryTree) int
+    f = func (btree BinaryTree) int{
+        if btree.left == nil && btree.right == nil {
+            return 0
+        }
+        if btree.left != nil && btree.right != nil {
+            return (1 + max (f(*btree.left), f(*btree.right)))
+        } else { 
+            if btree.left != nil {
+                return (1 + f(*btree.left))
+            } else { 
+                if btree.right != nil {
+                    return (1 + f(*btree.right))
+                } 
+            } 
+        }
+        return 0
+    }
+    return f(btree)
 }
